@@ -24,12 +24,12 @@ function App() {
   }, [data]);
 
   const categories = [
-    "All",
-    "Grocery",
-    "Vegetables",
-    "Makeup",
-    "Clothing",
-    "Market Properties"
+    { name: "All", icon: "📦" },
+    { name: "Grocery", icon: "🛒" },
+    { name: "Vegetables", icon: "🥦" },
+    { name: "Makeup", icon: "💄" },
+    { name: "Clothing", icon: "👕" },
+    { name: "Market Properties", icon: "🏪" }
   ];
 
   const filteredInvoices = data.invoices.filter(
@@ -44,7 +44,8 @@ function App() {
       product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.brand.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory =
-      categoryFilter === "all" || product.category === categoryFilter;
+      categoryFilter === "all" ||
+      product.category.toLowerCase() === categoryFilter;
     return matchesSearch && matchesCategory;
   });
 
@@ -169,11 +170,14 @@ function App() {
         <div className="filter-buttons">
           {categories.map((cat) => (
             <button
-              key={cat}
-              className={`filter-btn ${categoryFilter === cat.toLowerCase() ? "active" : ""}`}
-              onClick={() => setCategoryFilter(cat.toLowerCase())}
+              key={cat.name}
+              className={`filter-btn ${
+                categoryFilter === cat.name.toLowerCase() ? "active" : ""
+              }`}
+              onClick={() => setCategoryFilter(cat.name.toLowerCase())}
             >
-              {cat}
+              <span>{cat.icon}</span>
+              {cat.name}
             </button>
           ))}
         </div>
@@ -336,8 +340,7 @@ function App() {
     <div className="app">
       <header className="header">
         <div className="logo">
-          <span className="logo-icon">� wholesale</span>
-          <h1>WholesaleBilling Pro</h1>
+          <h1>WholesaleBilling</h1>
         </div>
         <div className="nav-buttons">
           <button

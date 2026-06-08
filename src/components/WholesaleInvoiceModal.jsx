@@ -1,21 +1,27 @@
 // src/components/WholesaleInvoiceModal.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
-const WholesaleInvoiceModal = ({ onClose, onSave, initialData, clients, products }) => {
+const WholesaleInvoiceModal = ({
+  onClose,
+  onSave,
+  initialData,
+  clients,
+  products
+}) => {
   const [formData, setFormData] = useState({
-    clientName: '',
-    date: new Date().toISOString().split('T')[0],
-    dueDate: '',
-    status: 'pending',
-    paymentTerms: 'cash',
+    clientName: "",
+    date: new Date().toISOString().split("T")[0],
+    dueDate: "",
+    status: "pending",
+    paymentTerms: "cash",
     discount: 0,
     shippingCharge: 0,
     items: [],
-    notes: ''
+    notes: ""
   });
 
-  const [selectedProduct, setSelectedProduct] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (initialData) {
@@ -23,46 +29,60 @@ const WholesaleInvoiceModal = ({ onClose, onSave, initialData, clients, products
     } else {
       const due = new Date();
       due.setDate(due.getDate() + 15);
-      setFormData(prev => ({ ...prev, dueDate: due.toISOString().split('T')[0] }));
+      setFormData((prev) => ({
+        ...prev,
+        dueDate: due.toISOString().split("T")[0]
+      }));
     }
   }, [initialData]);
 
-  const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.brand.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = products.filter(
+    (p) =>
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.brand.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const addProductToBill = (product) => {
-    const existingItem = formData.items.find(item => item.productId === product.id);
+    const existingItem = formData.items.find(
+      (item) => item.productId === product.id
+    );
     if (existingItem) {
-      updateItem(formData.items.indexOf(existingItem), 'quantity', existingItem.quantity + 1);
+      updateItem(
+        formData.items.indexOf(existingItem),
+        "quantity",
+        existingItem.quantity + 1
+      );
     } else {
       setFormData({
         ...formData,
-        items: [...formData.items, {
-          productId: product.id,
-          productName: product.name,
-          quantity: 1,
-          unitPrice: product.wholesalePrice,
-          unit: product.unit,
-          gst: product.gst,
-          total: product.wholesalePrice,
-          gstAmount: (product.wholesalePrice * product.gst) / 100
-        }]
+        items: [
+          ...formData.items,
+          {
+            productId: product.id,
+            productName: product.name,
+            quantity: 1,
+            unitPrice: product.wholesalePrice,
+            unit: product.unit,
+            gst: product.gst,
+            total: product.wholesalePrice,
+            gstAmount: (product.wholesalePrice * product.gst) / 100
+          }
+        ]
       });
     }
-    setSelectedProduct('');
-    setSearchTerm('');
+    setSelectedProduct("");
+    setSearchTerm("");
   };
 
   const updateItem = (index, field, value) => {
     const newItems = [...formData.items];
-    if (field === 'quantity') {
+    if (field === "quantity") {
       const qty = parseFloat(value) || 0;
       newItems[index].quantity = qty;
       newItems[index].total = newItems[index].unitPrice * qty;
-      newItems[index].gstAmount = (newItems[index].total * newItems[index].gst) / 100;
+      newItems[index].gstAmount =
+        (newItems[index].total * newItems[index].gst) / 100;
     }
     setFormData({ ...formData, items: newItems });
   };
@@ -103,29 +123,64 @@ const WholesaleInvoiceModal = ({ onClose, onSave, initialData, clients, products
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal modal-xl" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>{initialData ? 'Edit Wholesale Invoice' : 'Create Wholesale Invoice'}</h2>
-          <button className="close-modal" onClick={onClose}>×</button>
+          <h2>
+            {initialData
+              ? "Edit Wholesale Invoice"
+              : "Create Wholesale Invoice"}
+          </h2>
+          <button className="close-modal" onClick={onClose}>
+            ×
+          </button>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="form-grid">
             <div className="form-group">
               <label>Client *</label>
-              <select value={formData.clientName} onChange={(e) => setFormData({...formData, clientName: e.target.value})} required>
+              <select
+                value={formData.clientName}
+                onChange={(e) =>
+                  setFormData({ ...formData, clientName: e.target.value })
+                }
+                required
+              >
                 <option value="">Select Client</option>
-                {clients.map(c => <option key={c.id} value={c.name}>{c.name} - {c.businessName}</option>)}
+                {clients.map((c) => (
+                  <option key={c.id} value={c.name}>
+                    {c.name} - {c.businessName}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="form-group">
               <label>Invoice Date</label>
-              <input type="date" value={formData.date} onChange={(e) => setFormData({...formData, date: e.target.value})} required />
+              <input
+                type="date"
+                value={formData.date}
+                onChange={(e) =>
+                  setFormData({ ...formData, date: e.target.value })
+                }
+                required
+              />
             </div>
             <div className="form-group">
               <label>Due Date</label>
-              <input type="date" value={formData.dueDate} onChange={(e) => setFormData({...formData, dueDate: e.target.value})} required />
+              <input
+                type="date"
+                value={formData.dueDate}
+                onChange={(e) =>
+                  setFormData({ ...formData, dueDate: e.target.value })
+                }
+                required
+              />
             </div>
             <div className="form-group">
               <label>Payment Terms</label>
-              <select value={formData.paymentTerms} onChange={(e) => setFormData({...formData, paymentTerms: e.target.value})}>
+              <select
+                value={formData.paymentTerms}
+                onChange={(e) =>
+                  setFormData({ ...formData, paymentTerms: e.target.value })
+                }
+              >
                 <option value="cash">Cash</option>
                 <option value="credit">Credit (15 days)</option>
                 <option value="credit30">Credit (30 days)</option>
@@ -138,22 +193,31 @@ const WholesaleInvoiceModal = ({ onClose, onSave, initialData, clients, products
           <div className="product-search-section">
             <label>Add Products</label>
             <div className="search-box">
-              <input 
-                type="text" 
-                placeholder="Search products by name, category or brand..." 
+              <input
+                type="text"
+                placeholder="Search products by name, category or brand..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             {searchTerm && (
               <div className="product-dropdown">
-                {filteredProducts.map(product => (
-                  <div key={product.id} className="product-item" onClick={() => addProductToBill(product)}>
+                {filteredProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="product-item"
+                    onClick={() => addProductToBill(product)}
+                  >
                     <div>
                       <strong>{product.name}</strong>
-                      <small>{product.category} - {product.brand}</small>
+                      <small>
+                        {product.category} - {product.brand}
+                      </small>
                     </div>
-                    <div>₹{product.wholesalePrice}/{product.unit} | Stock: {product.stock}</div>
+                    <div>
+                      ₹{product.wholesalePrice}/{product.unit} | Stock:{" "}
+                      {product.stock}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -180,13 +244,15 @@ const WholesaleInvoiceModal = ({ onClose, onSave, initialData, clients, products
                     <tr key={idx}>
                       <td>{item.productName}</td>
                       <td>
-                        <input 
-                          type="number" 
-                          value={item.quantity} 
-                          onChange={(e) => updateItem(idx, 'quantity', e.target.value)}
+                        <input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) =>
+                            updateItem(idx, "quantity", e.target.value)
+                          }
                           min="0.1"
                           step="0.1"
-                          style={{width: '80px'}}
+                          style={{ width: "80px" }}
                         />
                       </td>
                       <td>{item.unit}</td>
@@ -194,7 +260,9 @@ const WholesaleInvoiceModal = ({ onClose, onSave, initialData, clients, products
                       <td>{item.gst}%</td>
                       <td>₹{(item.total + item.gstAmount).toFixed(2)}</td>
                       <td>
-                        <button type="button" onClick={() => removeItem(idx)}>🗑️</button>
+                        <button type="button" onClick={() => removeItem(idx)}>
+                          🗑️
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -206,15 +274,39 @@ const WholesaleInvoiceModal = ({ onClose, onSave, initialData, clients, products
           <div className="invoice-summary">
             <div className="form-group">
               <label>Discount (₹)</label>
-              <input type="number" value={formData.discount} onChange={(e) => setFormData({...formData, discount: parseFloat(e.target.value) || 0})} />
+              <input
+                type="number"
+                value={formData.discount}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    discount: parseFloat(e.target.value) || 0
+                  })
+                }
+              />
             </div>
             <div className="form-group">
               <label>Shipping Charge (₹)</label>
-              <input type="number" value={formData.shippingCharge} onChange={(e) => setFormData({...formData, shippingCharge: parseFloat(e.target.value) || 0})} />
+              <input
+                type="number"
+                value={formData.shippingCharge}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    shippingCharge: parseFloat(e.target.value) || 0
+                  })
+                }
+              />
             </div>
             <div className="form-group">
               <label>Notes</label>
-              <textarea rows="2" value={formData.notes} onChange={(e) => setFormData({...formData, notes: e.target.value})} />
+              <textarea
+                rows="2"
+                value={formData.notes}
+                onChange={(e) =>
+                  setFormData({ ...formData, notes: e.target.value })
+                }
+              />
             </div>
           </div>
 
@@ -223,12 +315,18 @@ const WholesaleInvoiceModal = ({ onClose, onSave, initialData, clients, products
             <div>Total GST: ₹{calculateTotalGST().toFixed(2)}</div>
             <div>Discount: -₹{formData.discount.toFixed(2)}</div>
             <div>Shipping: +₹{formData.shippingCharge.toFixed(2)}</div>
-            <div className="grand-total">Grand Total: ₹{calculateTotal().toFixed(2)}</div>
+            <div className="grand-total">
+              Grand Total: ₹{calculateTotal().toFixed(2)}
+            </div>
           </div>
 
           <div className="modal-footer">
-            <button type="button" className="btn-secondary" onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn-primary">Save Invoice</button>
+            <button type="button" className="btn-secondary" onClick={onClose}>
+              Cancel
+            </button>
+            <button type="submit" className="btn-primary">
+              Save Invoice
+            </button>
           </div>
         </form>
       </div>
