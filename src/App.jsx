@@ -340,7 +340,7 @@ function App() {
     <div className="app">
       <header className="header">
         <div className="logo">
-          <h1>WholesaleBilling</h1>
+          <h1>WholesaleBilling Pro</h1>
         </div>
         <div className="nav-buttons">
           <button
@@ -360,6 +360,12 @@ function App() {
             onClick={() => setActiveTab("clients")}
           >
             Clients ({data.clients.length})
+          </button>
+          <button
+            className="nav-btn admin-btn"
+            onClick={() => window.open("/admin", "_blank")}
+          >
+            👑 Admin
           </button>
         </div>
       </header>
