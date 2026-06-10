@@ -375,7 +375,7 @@ function App() {
           <div className="stat-card">
             <div>
               <h3>TOTAL REVENUE</h3>
-              <div className="stat-value">₹{stats.total.toFixed(2)}</div>
+              <div className="stat-value bg-green-300">₹{stats.total.toFixed(2)}</div>
             </div>
             <span className="stat-icon">💰</span>
           </div>
